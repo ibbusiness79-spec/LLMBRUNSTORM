@@ -107,7 +107,7 @@ async function callGemini(prompt) {
       generationConfig: {
         temperature: 0.7,
         topP: 0.9,
-        maxOutputTokens: 1200,
+        maxOutputTokens: 1400,
       },
     }),
   });
@@ -118,8 +118,13 @@ async function callGemini(prompt) {
   }
 
   const data = await res.json();
-  const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+  let text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+  const finishReason = data?.candidates?.[0]?.finishReason;
   if (!text) throw new Error("Réponse vide du modèle.");
+  if (finishReason === "MAX_TOKENS") {
+    text +=
+      "\n\n---\nLa réponse a été tronquée (limite de tokens). Dis \"continue\" pour poursuivre.";
+  }
   return text;
 }
 
@@ -142,7 +147,7 @@ async function callGeminiChat(messages) {
       generationConfig: {
         temperature: 0.7,
         topP: 0.9,
-        maxOutputTokens: 800,
+        maxOutputTokens: 1400,
       },
     }),
   });
@@ -153,8 +158,13 @@ async function callGeminiChat(messages) {
   }
 
   const data = await res.json();
-  const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+  let text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+  const finishReason = data?.candidates?.[0]?.finishReason;
   if (!text) throw new Error("Réponse vide du modèle.");
+  if (finishReason === "MAX_TOKENS") {
+    text +=
+      "\n\n---\nLa réponse a été tronquée (limite de tokens). Dis \"continue\" pour poursuivre.";
+  }
   return text;
 }
 
