@@ -6,6 +6,7 @@
   chatInput: document.getElementById("chatInput"),
   chatSend: document.getElementById("chatSend"),
   chatClear: document.getElementById("chatClear"),
+  chatContinue: document.getElementById("chatContinue"),
   modeAnalyze: document.getElementById("modeAnalyze"),
   modeIdeate: document.getElementById("modeIdeate"),
   modeLabel: document.getElementById("modeLabel"),
@@ -17,6 +18,7 @@ let chatMode = "analyze";
 let questionCount = 0;
 let awaitingAnswers = false;
 let forceStructure = false;
+let lastTruncated = false;
 
 const GOOGLE_AI_MODEL = "gemini-2.5-flash";
 const API_ENDPOINT = "/api/gemini";
@@ -165,6 +167,7 @@ async function callGeminiChat(messages) {
     text +=
       "\n\n---\nLa réponse a été tronquée (limite de tokens). Dis \"continue\" pour poursuivre.";
   }
+  lastTruncated = finishReason === "MAX_TOKENS";
   return text;
 }
 
@@ -202,11 +205,17 @@ function appendChat(role, text) {
   els.chat.scrollTop = els.chat.scrollHeight;
 }
 
-async function handleChatSend() {
-  const text = els.chatInput.value.trim();
+function setContinueVisibility() {
+  if (!els.chatContinue) return;
+  els.chatContinue.style.display = lastTruncated ? "inline-flex" : "none";
+}
+
+async function sendChatMessage(text, showUser = true) {
   if (!text) return;
-  appendChat("user", text);
-  els.chatInput.value = "";
+  if (showUser) {
+    appendChat("user", text);
+    els.chatInput.value = "";
+  }
 
   if (awaitingAnswers) {
     forceStructure = true;
@@ -238,11 +247,25 @@ async function handleChatSend() {
       awaitingAnswers = false;
     }
     forceStructure = false;
+    setContinueVisibility();
   } catch (err) {
     const last = els.chat.querySelector(".chat-msg.assistant:last-child");
     if (last) last.innerHTML = escapeHtml(err.message);
     els.output.innerHTML = `<div class="placeholder">${escapeHtml(err.message)}</div>`;
+    lastTruncated = false;
+    setContinueVisibility();
   }
+}
+
+async function handleChatSend() {
+  const text = els.chatInput.value.trim();
+  await sendChatMessage(text, true);
+}
+
+async function handleChatContinue() {
+  lastTruncated = false;
+  setContinueVisibility();
+  await sendChatMessage("continue", true);
 }
 
 function handleChatClear() {
@@ -254,6 +277,8 @@ function handleChatClear() {
   questionCount = 0;
   awaitingAnswers = false;
   forceStructure = false;
+  lastTruncated = false;
+  setContinueVisibility();
 }
 
 function updateModeUI() {
@@ -275,6 +300,8 @@ function updateModeUI() {
   questionCount = 0;
   awaitingAnswers = false;
   forceStructure = false;
+  lastTruncated = false;
+  setContinueVisibility();
 }
 
 function buildMarkdownExport() {
@@ -412,6 +439,7 @@ els.exportMd.addEventListener("click", handleExportMarkdown);
 els.exportPdf.addEventListener("click", handleExportPdf);
 els.chatSend.addEventListener("click", handleChatSend);
 els.chatClear.addEventListener("click", handleChatClear);
+els.chatContinue.addEventListener("click", handleChatContinue);
 els.modeAnalyze.addEventListener("click", () => {
   chatMode = "analyze";
   updateModeUI();
