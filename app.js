@@ -18,8 +18,8 @@ let questionCount = 0;
 let awaitingAnswers = false;
 let forceStructure = false;
 
-const GOOGLE_AI_API_KEY = "AIzaSyBMnAC-QEe1fKCAyH0yQat4VnBTgcThpcA";
 const GOOGLE_AI_MODEL = "gemini-2.5-flash";
+const API_ENDPOINT = "/api/gemini";
 
 function buildChatSystemPrompt(mode, context) {
   if (mode === "ideate") {
@@ -97,20 +97,12 @@ function renderMarkdown(text) {
 }
 
 async function callGemini(prompt) {
-  const key = GOOGLE_AI_API_KEY.trim();
   const model = GOOGLE_AI_MODEL;
-  if (!key || key === "PASTE_YOUR_KEY_HERE") {
-    throw new Error("Clé API manquante. Ajoute-la dans app.js.");
-  }
-
-  const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(
-    key
-  )}`;
-
-  const res = await fetchWithRetry(endpoint, {
+  const res = await fetchWithRetry(API_ENDPOINT, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
+      model,
       contents: [{ role: "USER", parts: [{ text: prompt }] }],
       generationConfig: {
         temperature: 0.7,
@@ -132,16 +124,7 @@ async function callGemini(prompt) {
 }
 
 async function callGeminiChat(messages) {
-  const key = GOOGLE_AI_API_KEY.trim();
   const model = GOOGLE_AI_MODEL;
-  if (!key || key === "PASTE_YOUR_KEY_HERE") {
-    throw new Error("Clé API manquante. Ajoute-la dans app.js.");
-  }
-
-  const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(
-    key
-  )}`;
-
   const contents = messages.map(msg => {
     const role = msg.role === "assistant" ? "MODEL" : "USER";
     return {
@@ -150,10 +133,11 @@ async function callGeminiChat(messages) {
     };
   });
 
-  const res = await fetchWithRetry(endpoint, {
+  const res = await fetchWithRetry(API_ENDPOINT, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
+      model,
       contents,
       generationConfig: {
         temperature: 0.7,
