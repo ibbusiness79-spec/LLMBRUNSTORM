@@ -1,4 +1,4 @@
-﻿@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,600;9..144,700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,600;9..144,700&display=swap");
 
 :root {
   --bg-1: #f6f1ea;
@@ -86,7 +86,6 @@ h1 {
   backdrop-filter: blur(8px);
   animation: rise 0.6s ease both;
 }
-
 
 .card-title {
   font-weight: 600;

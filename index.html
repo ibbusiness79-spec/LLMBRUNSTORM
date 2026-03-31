@@ -1,66 +1,13 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="fr">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>NEXIBRA AI</title>
-  <link rel="stylesheet" href="styles.css" />
-</head>
-<body>
-  <div class="bg"></div>
-  <header class="hero">
-    <div class="hero-inner">
-      <div class="badge">Votre assistant d'idéation</div>
-      <h1>NEXIBRA AI</h1>
-      <p class="subtitle">
-        Décris ton idée et l'IA la structure en tenant compte de la faisabilité,
-        rentabilité et viabilité.
-      </p>
-    </div>
-  </header>
-
-  <main class="container">
-    <section class="card">
-      <div class="card-title">Assistant d'idéation</div>
-      <p class="muted">
-        Écris ton idée et l'IA te renverra une analyse structurée.
-      </p>
-      <div class="mode-switch">
-        <button id="modeAnalyze" class="btn tiny primary">Analyse structurée</button>
-        <button id="modeIdeate" class="btn tiny ghost">Idéation libre</button>
-        <span id="modeLabel" class="status">Mode: analyse</span>
-      </div>
-      <div id="chat" class="chat">
-        <div class="chat-msg system">
-          Bonjour ! Décris ton idée pour obtenir une analyse complète.
-        </div>
-      </div>
-      <div class="chat-input">
-        <textarea id="chatInput" rows="2" placeholder="Décris ton idée en quelques phrases..."></textarea>
-        <button id="chatSend" class="btn primary">Envoyer</button>
-      </div>
-      <div class="actions">
-        <button id="chatClear" class="btn ghost">Vider le chat</button>
-        <button id="chatContinue" class="btn ghost" style="display: none;">Continuer la réponse</button>
-      </div>
-    </section>
-
-    <section class="card">
-      <div class="card-title">Analyse structurée</div>
-      <div class="actions">
-        <button id="exportMd" class="btn ghost">Exporter Markdown</button>
-        <button id="exportPdf" class="btn ghost">Exporter PDF</button>
-      </div>
-      <div id="output" class="output">
-        <div class="placeholder">Les résultats apparaîtront ici.</div>
-      </div>
-    </section>
-  </main>
-
-  <footer class="footer">
-    <div>NEXIBRA AI — de l'intuition à un plan clair et viable.</div>
-  </footer>
-
-  <script src="app.js"></script>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NEXIBRA AI</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
 </html>

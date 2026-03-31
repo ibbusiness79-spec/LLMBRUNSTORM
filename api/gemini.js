@@ -1,6 +1,6 @@
 const ALLOWED_METHODS = ["POST"];
 
-module.exports = async (req, res) => {
+export default async function handler(req, res) {
   if (!ALLOWED_METHODS.includes(req.method)) {
     res.setHeader("Allow", ALLOWED_METHODS.join(", "));
     return res.status(405).json({ error: "Method Not Allowed" });
@@ -47,4 +47,4 @@ module.exports = async (req, res) => {
   } catch (err) {
     return res.status(500).json({ error: err?.message || "Erreur serveur." });
   }
-};
+}
