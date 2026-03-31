@@ -19,6 +19,8 @@ let questionCount = 0;
 let awaitingAnswers = false;
 let forceStructure = false;
 let lastTruncated = false;
+let autoContinueCount = 0;
+const AUTO_CONTINUE_MAX = 3;
 
 const GOOGLE_AI_MODEL = "gemini-2.5-flash";
 const API_ENDPOINT = "/api/gemini";
@@ -215,6 +217,7 @@ async function sendChatMessage(text, showUser = true) {
   if (showUser) {
     appendChat("user", text);
     els.chatInput.value = "";
+    autoContinueCount = 0;
   }
 
   if (awaitingAnswers) {
@@ -248,6 +251,13 @@ async function sendChatMessage(text, showUser = true) {
     }
     forceStructure = false;
     setContinueVisibility();
+    if (lastTruncated && autoContinueCount < AUTO_CONTINUE_MAX) {
+      autoContinueCount += 1;
+      setContinueVisibility();
+      setTimeout(() => {
+        sendChatMessage("continue", false);
+      }, 0);
+    }
   } catch (err) {
     const last = els.chat.querySelector(".chat-msg.assistant:last-child");
     if (last) last.innerHTML = escapeHtml(err.message);
